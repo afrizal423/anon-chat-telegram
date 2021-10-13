@@ -8,6 +8,8 @@ import uuid
 from datetime import datetime
 from config.redis import r
 from config.bot import bot, TOKEN
+import uvicorn
+
 
 config.read('konfig.ini')
 
@@ -290,3 +292,6 @@ async def getMessage(request: Request):
 def root():
     # print(r.keys())
     return {"message": "Hello World"}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8010)

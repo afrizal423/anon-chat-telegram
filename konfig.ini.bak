@@ -3,3 +3,5 @@ API_TELEGRAM =
 
 # Harus pake / (slash) bagian akhir
 URL_WEBSITE = 
+
+REDIS_SOCK = 
