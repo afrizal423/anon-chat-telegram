@@ -72,21 +72,17 @@ def cariPartner(id, mssge_id, msg):
         bot.send_message(msg.chat.id,"""\
 <strong>Yeeeayy, kamu mendapatkan teman ngobrol.</strong>
 🔹Gender            : {}
-🔹Tertarik pada : {}
 🔹Umur               : {} Tahun 🎂
     \
             """.format("Laki-Laki 👦" if data['jeniskelamin_user'] == 'L' else "Perempuan 👧", 
-                       "Laki-Laki 👦" if data['ketertarikan_user'] == 'L' else "Perempuan 👧",
                        data['umur_user']), parse_mode='HTML')
         # ini yang nerima
         bot.send_message(data['id_user'],"""\
 <strong>Yeeeayy, kamu mendapatkan teman ngobrol.</strong>
 🔹Gender            : {}
-🔹Tertarik pada : {}
 🔹Umur               : {} Tahun 🎂
     \
             """.format("Laki-Laki 👦" if identitas['jeniskelamin_user'] == 'L' else "Perempuan 👧", 
-                       "Laki-Laki 👦" if identitas['ketertarikan_user'] == 'L' else "Perempuan 👧",
                        identitas['umur_user']), parse_mode='HTML')
     # print(conn.execute(query).fetchone())
 

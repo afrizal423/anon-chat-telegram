@@ -395,6 +395,7 @@ Jika partner ngobrolmu melakukan kesalahan, silahkan /lapor.
 /cari_partner - Mencari obrolan
 /lewati - Berhenti dan mencari obrolan lain
 /berhenti - Berhenti obrolan atau berhenti mencari obrolan
+/pengaturan - Pengaturan bot FindPartnerChat
 /peraturan - Peraturan bot FindPartnerChat
 /bantuan - Bantuan pada bot FindPartnerChat
 /tentang - Tentang bot FindPartnerChat
