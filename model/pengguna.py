@@ -16,6 +16,7 @@ pgn = sqlalchemy.Table(
     sqlalchemy.Column("ketertarikan_user", sqlalchemy.String),
     sqlalchemy.Column("umur_user", sqlalchemy.String),
     sqlalchemy.Column("joined_at", sqlalchemy.DateTime),
+    sqlalchemy.Column("is_banned", sqlalchemy.Boolean),
 )
 
 idle = sqlalchemy.Table(
@@ -25,4 +26,14 @@ idle = sqlalchemy.Table(
     sqlalchemy.Column("id_user", sqlalchemy.String),
     sqlalchemy.Column("status", sqlalchemy.String),
     sqlalchemy.Column("mssg_id", sqlalchemy.String),
+)
+
+plprn = sqlalchemy.Table(
+    "tbl_pelaporan",
+    metadata,
+    sqlalchemy.Column("pelaporan_uuid", UUID(as_uuid=True), primary_key=True),
+    sqlalchemy.Column("tersangka", sqlalchemy.String),
+    sqlalchemy.Column("id_user", sqlalchemy.String),
+    sqlalchemy.Column("isi_laporan", sqlalchemy.String),
+    sqlalchemy.Column("waktu_masuk", sqlalchemy.DateTime),
 )

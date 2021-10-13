@@ -1,6 +1,6 @@
 from sqlalchemy.sql.functions import random
 from config.db import conn
-from model.pengguna import pgn, idle
+from model.pengguna import pgn, idle, plprn
 from sqlalchemy import select
 from config.redis import r
 from config.bot import bot
@@ -61,7 +61,7 @@ def cariPartner(id, mssge_id, msg):
                                     pgn.c.umur_user.between(
                                         identitas['umur_user']-5 if identitas['jeniskelamin_user'] == 'L' else identitas['umur_user']-3, identitas['umur_user']+3 if identitas['jeniskelamin_user'] == 'L' else identitas['umur_user']+5)).order_by(random()).limit(1)
     data = conn.execute(query).fetchone()
-    if data is not None and r.exists("inchat_{}".format(msg.from_user.id)) == 0:
+    if data is not None and r.exists("inchat_{}".format(data['id_user'])) == 0:
         toRedis = {
             mssge_id: data['id_user'],
             data['id_user']: mssge_id
@@ -73,20 +73,20 @@ def cariPartner(id, mssge_id, msg):
 <strong>Yeeeayy, kamu mendapatkan teman ngobrol.</strong>
 🔹Gender            : {}
 🔹Tertarik pada : {}
-🔹Umur               : {} Tahun
+🔹Umur               : {} Tahun 🎂
     \
-            """.format("Laki-Laki" if data['jeniskelamin_user'] == 'L' else "Perempuan", 
-                       "Laki-Laki" if data['ketertarikan_user'] == 'L' else "Perempuan",
+            """.format("Laki-Laki 👦" if data['jeniskelamin_user'] == 'L' else "Perempuan 👧", 
+                       "Laki-Laki 👦" if data['ketertarikan_user'] == 'L' else "Perempuan 👧",
                        data['umur_user']), parse_mode='HTML')
         # ini yang nerima
         bot.send_message(data['id_user'],"""\
 <strong>Yeeeayy, kamu mendapatkan teman ngobrol.</strong>
 🔹Gender            : {}
 🔹Tertarik pada : {}
-🔹Umur               : {} Tahun
+🔹Umur               : {} Tahun 🎂
     \
-            """.format("Laki-Laki" if identitas['jeniskelamin_user'] == 'L' else "Perempuan", 
-                       "Laki-Laki" if identitas['ketertarikan_user'] == 'L' else "Perempuan",
+            """.format("Laki-Laki 👦" if identitas['jeniskelamin_user'] == 'L' else "Perempuan 👧", 
+                       "Laki-Laki 👦" if identitas['ketertarikan_user'] == 'L' else "Perempuan 👧",
                        identitas['umur_user']), parse_mode='HTML')
     # print(conn.execute(query).fetchone())
 
@@ -106,3 +106,8 @@ def pisahPartner(id, mssge_id):
     
     r.delete(satu)
     r.delete(dua)
+    
+# Ini tambah laporan
+def tambahLaporan(data):
+    query = plprn.insert().values(data)
+    conn.execute(query)
