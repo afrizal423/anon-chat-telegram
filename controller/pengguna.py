@@ -60,7 +60,23 @@ def cariPartner(id, mssge_id, msg):
                                     ).where(
                                     pgn.c.umur_user.between(
                                         identitas['umur_user']-5 if identitas['jeniskelamin_user'] == 'L' else identitas['umur_user']-3, identitas['umur_user']+3 if identitas['jeniskelamin_user'] == 'L' else identitas['umur_user']+5)).order_by(random()).limit(1)
-    data = conn.execute(query).fetchone()
+    
+    query2 = """
+select id_user, username_user, firstname_user, jeniskelamin_user, ketertarikan_user, umur_user, (
+select status from tbl_iddle where id_user = tbl_pengguna.id_user) as statusnya
+from tbl_pengguna
+where ( id_user in (
+select id_user from tbl_iddle
+where status = 'true') and
+jeniskelamin_user = 'L' and
+id_user != '{}') or (
+id_user in (
+select id_user from tbl_iddle
+where status = 'true') and
+jeniskelamin_user = 'P' and
+id_user != '{}') 
+    """.format(identitas['id_user'], identitas['id_user'])
+    data = conn.execute(query2).fetchone()
     if data is not None and r.exists("inchat_{}".format(data['id_user'])) == 0:
         toRedis = {
             mssge_id: data['id_user'],
@@ -72,18 +88,20 @@ def cariPartner(id, mssge_id, msg):
         bot.send_message(msg.chat.id,"""\
 <strong>Yeeeayy, kamu mendapatkan teman ngobrol.</strong>
 🔹Gender            : {}
-🔹Umur               : {} Tahun 🎂
+
+<strong>Pastikan obrolan tidak melanggar /rules ya.</strong>
+<strong>Jika partnermu melanggar silahkan /lapor.</strong>
     \
-            """.format("Laki-Laki 👦" if data['jeniskelamin_user'] == 'L' else "Perempuan 👧", 
-                       data['umur_user']), parse_mode='HTML')
+            """.format("Laki-Laki 👦" if data['jeniskelamin_user'] == 'L' else "Perempuan 👧"), parse_mode='HTML')
         # ini yang nerima
         bot.send_message(data['id_user'],"""\
 <strong>Yeeeayy, kamu mendapatkan teman ngobrol.</strong>
 🔹Gender            : {}
-🔹Umur               : {} Tahun 🎂
+
+<strong>Pastikan obrolan tidak melanggar /rules ya.</strong>
+<strong>Jika partnermu melanggar, silahkan /lapor.</strong>
     \
-            """.format("Laki-Laki 👦" if identitas['jeniskelamin_user'] == 'L' else "Perempuan 👧", 
-                       identitas['umur_user']), parse_mode='HTML')
+            """.format("Laki-Laki 👦" if identitas['jeniskelamin_user'] == 'L' else "Perempuan 👧"), parse_mode='HTML')
     # print(conn.execute(query).fetchone())
 
 def pisahPartner(id, mssge_id):
