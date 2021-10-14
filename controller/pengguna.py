@@ -74,7 +74,8 @@ id_user in (
 select id_user from tbl_iddle
 where status = 'true') and
 jeniskelamin_user = 'P' and
-id_user != '{}') 
+id_user != '{}')
+order by random() 
     """.format(identitas['id_user'], identitas['id_user'])
     data = conn.execute(query2).fetchone()
     if data is not None and r.exists("inchat_{}".format(data['id_user'])) == 0:
