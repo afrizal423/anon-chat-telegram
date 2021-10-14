@@ -4,6 +4,8 @@ from model.pengguna import pgn, idle, plprn
 from sqlalchemy import select
 from config.redis import r
 from config.bot import bot
+from datetime import datetime
+
 
 
 def getData(id):
@@ -43,9 +45,11 @@ def cekKetertarikan(id):
     return cek['ketertarikan_user']
 
 def cariPartner(id, mssge_id, msg):
+    now = datetime.now()
     iddle = {
         'status': True,
-        'mssg_id': mssge_id
+        'mssg_id': mssge_id,
+        'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
     }
     updateDataIddle(iddle, id)
     identitas = getData(id)
@@ -108,14 +112,17 @@ order by random()
 def pisahPartner(id, mssge_id):
     satu = "inchat_"+str(mssge_id)
     dua = "inchat_"+r.hget("inchat_{}".format(mssge_id), mssge_id).decode("utf8")
+    now = datetime.now()
     iddle = {
         'status': False,
-        'mssg_id': None
+        'mssg_id': None,
+        'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
     }
     updateDataIddle(iddle, id)
     iddle = {
         'status': False,
-        'mssg_id': None
+        'mssg_id': None,
+        'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
     }
     updateDataIddle(iddle, r.hget("inchat_{}".format(mssge_id), mssge_id).decode("utf8"))
     

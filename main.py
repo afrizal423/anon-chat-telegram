@@ -275,9 +275,11 @@ def stop(message: telebot.types.Message):
         pengguna.pisahPartner(message.chat.id, message.chat.id)
     else:
         bot.send_message(message.chat.id, "<strong>Lohh, kok dihentikan sih😔😔. Hmmm, baiklah kalo begitu.</strong>😐", parse_mode="HTML")
+        now = datetime.now()
         iddle = {
             'status': False,
-            'mssg_id': None
+            'mssg_id': None,
+            'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
         }
         pengguna.updateDataIddle(iddle, message.chat.id)
 

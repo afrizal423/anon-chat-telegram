@@ -26,6 +26,7 @@ idle = sqlalchemy.Table(
     sqlalchemy.Column("id_user", sqlalchemy.String),
     sqlalchemy.Column("status", sqlalchemy.String),
     sqlalchemy.Column("mssg_id", sqlalchemy.String),
+    sqlalchemy.Column("updated_at", sqlalchemy.DateTime),
 )
 
 plprn = sqlalchemy.Table(
