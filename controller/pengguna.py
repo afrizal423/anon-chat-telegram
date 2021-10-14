@@ -5,6 +5,8 @@ from sqlalchemy import select
 from config.redis import r
 from config.bot import bot
 from datetime import datetime
+import time
+
 
 
 
@@ -44,14 +46,7 @@ def cekKetertarikan(id):
     cek = conn.execute(query).fetchone()
     return cek['ketertarikan_user']
 
-def cariPartner(id, mssge_id, msg):
-    now = datetime.now()
-    iddle = {
-        'status': True,
-        'mssg_id': mssge_id,
-        'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
-    }
-    updateDataIddle(iddle, id)
+def cariPartner(id, mssge_id, msg, loopnya):
     identitas = getData(id)
     query = select([pgn.columns.id_user, pgn.columns.jeniskelamin_user, 
                     pgn.columns.ketertarikan_user, 
@@ -83,6 +78,14 @@ order by random()
     """.format(identitas['id_user'], identitas['id_user'])
     data = conn.execute(query2).fetchone()
     if data is not None and r.exists("inchat_{}".format(data['id_user'])) == 0:
+        # hapus antrean
+        id_antrian = "antrian_{}".format(identitas['id_user'])
+        id_antrian2 = "antrian_{}".format(data['id_user'])
+        # print("hapus ", id_antrian)
+        # print("hapus ", id_antrian2)
+        r.delete(id_antrian)
+        r.delete(id_antrian2)
+        #
         toRedis = {
             mssge_id: data['id_user'],
             data['id_user']: mssge_id
@@ -108,6 +111,32 @@ order by random()
     \
             """.format("Laki-Laki 👦" if identitas['jeniskelamin_user'] == 'L' else "Perempuan 👧"), parse_mode='HTML')
     # print(conn.execute(query).fetchone())
+    else :
+        # print(loopnya)
+        # 1800 artinya 30 menit 
+        if loopnya < 1800 and r.exists("inchat_{}".format(identitas['id_user'])) == 0 and r.exists("antrian_{}".format(identitas['id_user'])):
+            loopnya+=1
+            time.sleep(1)
+            cariPartner(id, mssge_id, msg, loopnya)
+        elif loopnya == 1800:
+            # print("batassss")
+            now = datetime.now()
+            iddle = {
+                'status': False,
+                'mssg_id': None,
+                'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
+            }
+            updateDataIddle(iddle, id)
+            id_antrian = "antrian_{}".format(identitas['id_user'])
+            r.delete(id_antrian)
+            bot.send_message(msg.chat.id,"""\
+⚠️<strong>Upsss, sepertinya proses terlalu lama.</strong>⚠️
+
+<strong>Silahkan mulai ulang lagi /start.</strong>
+\
+            """, parse_mode='HTML')
+        else:
+            return
 
 def pisahPartner(id, mssge_id):
     satu = "inchat_"+str(mssge_id)

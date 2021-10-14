@@ -54,7 +54,18 @@ Atau jika ingin berhenti tekan /berhenti
 <em><strong>Sedang mencari partner ngobrol</strong></em>⌛
     \
     """, parse_mode="HTML")
-        pengguna.cariPartner(message.from_user.id, message.chat.id, message)
+        toRedis = {
+            'idnya': message.from_user.id
+        }
+        r.hmset("antrian_"+str(message.from_user.id),toRedis)
+        now = datetime.now()
+        iddle = {
+            'status': True,
+            'mssg_id': message.chat.id,
+            'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
+        }
+        pengguna.updateDataIddle(iddle, message.from_user.id)
+        pengguna.cariPartner(message.from_user.id, message.chat.id, message, 1)
 
 @bot.message_handler(commands=['pengaturan','settings'])
 def pengaturan(message):
@@ -282,6 +293,10 @@ def stop(message: telebot.types.Message):
             'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
         }
         pengguna.updateDataIddle(iddle, message.chat.id)
+        if r.exists("antrian_{}".format(message.from_user.id)):
+            id_antrian = "antrian_{}".format(message.from_user.id)
+            r.delete(id_antrian)
+             
 
 @bot.message_handler(commands=['skip','lewati'])
 def lewati(message: telebot.types.Message):
@@ -297,7 +312,18 @@ Yukkk cari lagi /cari_partner
 <em><strong>Sedang mencari partner ngobrol</strong></em>⌛
     \
     """, parse_mode="HTML")
-        pengguna.cariPartner(message.from_user.id, message.chat.id, message)
+        toRedis = {
+            'idnya': message.from_user.id
+        }
+        r.hmset("antrian_"+str(message.from_user.id),toRedis)
+        now = datetime.now()
+        iddle = {
+            'status': True,
+            'mssg_id': message.chat.id,
+            'updated_at': now.strftime("%Y/%m/%d %H:%M:%S")
+        }
+        pengguna.updateDataIddle(iddle, message.from_user.id)
+        pengguna.cariPartner(message.from_user.id, message.chat.id, message, 1)
     else:
         bot.send_message(message.chat.id, 
                          """
